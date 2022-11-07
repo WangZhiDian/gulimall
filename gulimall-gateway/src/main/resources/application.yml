@@ -1,0 +1,31 @@
+server:
+  port: 88
+  servlet:
+    session:
+      timeout: 30m
+
+spring:
+  application:
+    name: gulimall-gateway
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.40.201:8848
+      config:
+        server-addr: 172.16.40.201:8848
+
+    gateway:
+      routes:
+        - id: test_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu
+
+        - id: qq_route
+          uri: https://www.qq.com
+          predicates:
+            - Query=url,qq
+
+
+

@@ -1,0 +1,10 @@
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.40.201:8848
+      config:
+        server-addr: 172.16.40.201:8848
+        #namespace:  # 命名空间，用于隔离，可以用服务名称隔离
+        #group:   # 配置分组，默认名称下的多个版本，可以隔离 dev test prod等

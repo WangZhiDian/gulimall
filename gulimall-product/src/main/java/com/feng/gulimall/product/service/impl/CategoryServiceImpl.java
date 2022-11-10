@@ -1,5 +1,7 @@
 package com.feng.gulimall.product.service.impl;
 
+import com.feng.gulimall.product.entity.CategoryBrandRelationEntity;
+import com.feng.gulimall.product.service.CategoryBrandRelationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +18,15 @@ import com.feng.gulimall.product.dao.CategoryDao;
 import com.feng.gulimall.product.entity.CategoryEntity;
 import com.feng.gulimall.product.service.CategoryService;
 
+import javax.annotation.Resource;
+
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Resource
+    private CategoryBrandRelationService categoryBrandRelationService;
+
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -44,6 +52,20 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return (menu1.getSort() == null?0:menu1.getSort()) - (menu2.getSort() == null?0:menu2.getSort());
         }).collect(Collectors.toList());
         return level1Menus;
+    }
+
+    @Override
+    public void removeMenuByIds(List<Long> asList) {
+        //TODO 检查当前删除的菜单，是否被别的地方引用
+        List<CategoryBrandRelationEntity> categoryBrandRelation =
+                categoryBrandRelationService.list(new QueryWrapper<CategoryBrandRelationEntity>().in("catelog_id", asList));
+
+        if (categoryBrandRelation.size() == 0) {
+            //逻辑删除
+            baseMapper.deleteBatchIds(asList);
+        } else {
+            throw new RuntimeException("该菜单下面还有属性，无法删除!");
+        }
     }
 
     // 递归查找所有菜单的子菜单
